@@ -1,7 +1,7 @@
 import os
 import re
 
-# Функция для трансформации кода из main.lua
+# Transform main code
 def transform_main_code(code):
     replacements = {
         r'\bModules\.([a-zA-Z_][a-zA-Z0-9_]*)': r'modules.\1',
@@ -14,16 +14,16 @@ def transform_main_code(code):
         code = re.sub(pattern, repl, code)
     return code
 
-# Функция для "распаковки" содержимого модуля (удаляет return и local)
+# Unpack module code
 def unpack_lua_module(code):
     code = code.strip()
-    # Удаляем `local name = {}`
+    # Remove `local name = {}`
     code = re.sub(r'^local\s+(\w+)\s*=\s*{}\s*', r'\1 = {}', code, flags=re.MULTILINE)
-    # Удаляем `return name`
+    # Remove `return name`
     code = re.sub(r'\breturn\s+\w+\s*$', '', code, flags=re.MULTILINE)
     return code.strip()
 
-# Функция для генерации build.lua
+# Generate build file
 def generate_build(modules, assets, main_code, github_base_url, module_sources):
     out = []
 
@@ -37,7 +37,7 @@ def generate_build(modules, assets, main_code, github_base_url, module_sources):
     out.append("function _log(msg) if _debug then print(msg) end end")
     out.append("function _check_ready() if loaded >= to_load then _log('All assets loaded') _start_game() end end\n")
 
-    # Handle 3D models separately
+    # Load 3D models
     for key, filename in assets["models"].items():
         url = f"{github_base_url}/source/models/{filename}"
         out.append(f"""to_load += 1
@@ -66,7 +66,7 @@ HTTP:Get("{url}", function(res)
     end
 end)\n""")
 
-    # Handle other assets (textures, data, sounds)
+    # Load other assets
     for group in ["textures", "data", "sounds"]:
         for key, filename in assets[group].items():
             url = f"{github_base_url}/source/{group}/{filename}"
@@ -83,13 +83,13 @@ HTTP:Get("{url}", function(res)
     _check_ready()
 end)\n""")
 
-    # modules
+    # Add modules
     out.append("-- modules\n")
     for mod_name, mod_code in module_sources.items():
         unpacked = unpack_lua_module(mod_code)
         out.append(unpacked + "\n")
 
-    # start
+    # Add start function
     out.append("-- start\n")
     out.append("function _start_game()")
     out.append("    worldgen.test()")
@@ -97,7 +97,7 @@ end)\n""")
     
     return "\n".join(out)
 
-# Сборка проекта
+# Build project
 def build_project(source_dir, output_file, github_base_url):
     assets = {"models": {}, "textures": {}, "data": {}, "sounds": {}}
     module_sources = {}
@@ -118,7 +118,7 @@ def build_project(source_dir, output_file, github_base_url):
                 module_sources[mod_name] = content
             elif file.endswith(".json"):
                 with open(file_path, 'r', encoding='utf-8') as f:
-                    f.read()  # Просто проверка, что файл читается
+                    f.read()  # Check if file is readable
                 assets["data"][file.replace(".json", "")] = file
             elif file.endswith(".glb"):
                 assets["models"][file.replace(".glb", "")] = file
@@ -133,7 +133,7 @@ def build_project(source_dir, output_file, github_base_url):
         f.write(build_code)
     return output_file
 
-# Параметры для теста (можно переопределить)
+# Test parameters
 source_directory = "source"
 output_file = "build/build.lua"
 github_base_url = "https://raw.githubusercontent.com/Nanskip/NaN-GDK/refs/heads/main"
