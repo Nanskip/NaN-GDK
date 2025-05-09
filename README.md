@@ -1,3 +1,3 @@
 # NaN Game Development Kit (NaN-GDK)
 
-NaN-GDK is a collection of libraries and tools designed to simplify game development for the Blip game platform.
+NaN-GDK is a ready-to-build game development kit for Blip.
