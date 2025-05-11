@@ -23,6 +23,14 @@ def unpack_lua_module(code):
     code = re.sub(r'\breturn\s+\w+\s*$', '', code, flags=re.MULTILINE)
     return code.strip()
 
+def extract_onstart_content(code):
+    # Find _ON_START function content
+    pattern = r'_ON_START\s*=\s*function\s*\([^)]*\)\s*(.*?)(?=end\s*$)'
+    match = re.search(pattern, code, re.DOTALL)
+    if match:
+        return match.group(1).strip()
+    return ""
+
 # Generate build file
 def generate_build(modules, assets, main_code, github_base_url, module_sources):
     out = []
@@ -92,7 +100,13 @@ end)\n""")
     # Add start function
     out.append("-- start\n")
     out.append("function _start_game()")
-    out.append("    worldgen.test()")
+    onstart_content = extract_onstart_content(main_code)
+    if onstart_content:
+        # Indent the content properly with 4 spaces
+        indented_content = "\n".join("    " + line.lstrip() for line in onstart_content.split("\n"))
+        out.append(indented_content)
+    else:
+        out.append("    worldgen.test()")
     out.append("end\n")
     
     return "\n".join(out)

@@ -1,5 +1,6 @@
 Modules = {
     worldgen = "modules/worldgen.lua",
+    loading_screen = "modules/loading_screen.lua",
 }
 
 Models = {
@@ -14,6 +15,8 @@ Data = {
     test = "data/test.json",
 }
 
-Client.OnStart = function()
+_ON_START = function()
     worldgen.test()
+
+    loading_screen:finish()
 end
