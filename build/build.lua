@@ -41,6 +41,32 @@ HTTP:Get("https://raw.githubusercontent.com/Nanskip/NaN-GDK/refs/heads/main/sour
 end)
 
 to_load += 1
+_log("Downloading models/tesla_turret")
+HTTP:Get("https://raw.githubusercontent.com/Nanskip/NaN-GDK/refs/heads/main/source/models/tesla_turret.glb", function(res)
+    if res.StatusCode == 200 then
+        Assets:Load(res.Body, function(assets)
+            if assets == nil then
+                _log("Failed to load model tesla_turret")
+                loaded += 1
+                _check_ready()
+                return
+            end
+            for _, asset in ipairs(assets) do
+                asset:SetParent(World)
+                models.tesla_turret = asset
+                _log("Downloaded and loaded model tesla_turret")
+            end
+            loaded += 1
+            _check_ready()
+        end, AssetType.AnyObject)
+    else
+        _log("Failed to download models/tesla_turret: " .. res.StatusCode)
+        loaded += 1
+        _check_ready()
+    end
+end)
+
+to_load += 1
 _log("Downloading textures/can")
 HTTP:Get("https://raw.githubusercontent.com/Nanskip/NaN-GDK/refs/heads/main/source/textures/can.png", function(res)
     if res.StatusCode == 200 then
@@ -68,17 +94,22 @@ end)
 
 -- modules
 
-loading = {}loading.ui = require("uikit")
+loading_screen = {}loading_screen.ui = require("uikit")
 
-loading.start = function(self)
+loading_screen.start = function(self)
     local ui = self.ui
 
     self.background = ui:frame({color = Color(0, 0, 0, 0)})
+    self.background.Width = Screen.Width
+    self.background.Height = Screen.Height
 end
 
-loading.finish = function(self)
+loading_screen.finish = function(self)
     self.background:remove()
+    self.background = nil
 end
+
+loading_screen:start()
 
 worldgen = {}worldgen.test = function()
     print("hey!")

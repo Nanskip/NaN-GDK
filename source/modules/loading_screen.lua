@@ -1,15 +1,20 @@
-local loading = {}
+local loading_screen = {}
 
-loading.ui = require("uikit")
+loading_screen.ui = require("uikit")
 
-loading.start = function(self)
+loading_screen.start = function(self)
     local ui = self.ui
 
     self.background = ui:frame({color = Color(0, 0, 0, 0)})
+    self.background.Width = Screen.Width
+    self.background.Height = Screen.Height
 end
 
-loading.finish = function(self)
+loading_screen.finish = function(self)
     self.background:remove()
+    self.background = nil
 end
 
-return loading
+loading_screen:start()
+
+return loading_screen

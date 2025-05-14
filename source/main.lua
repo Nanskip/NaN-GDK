@@ -5,6 +5,7 @@ Modules = {
 
 Models = {
     soda_can = "models/soda_can.glb",
+    tesla_turret = "models/tesla_turret.glb",
 }
 
 Textures = {
