@@ -1,7 +1,7 @@
 local worldgen = {}
 
 worldgen.test = function()
-    print("hey!")
+    print("he")
 end
 
 return worldgen

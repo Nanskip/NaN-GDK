@@ -40,9 +40,15 @@ def generate_build(modules, assets, main_code, github_base_url, module_sources):
 
     for group in assets:
         out.append(f"{group} = {{}}\n")
+    
+    # Add modules
+    out.append("-- modules\n")
+    for mod_name, mod_code in module_sources.items():
+        unpacked = unpack_lua_module(mod_code)
+        out.append(unpacked + "\n")
 
     out.append("local to_load, loaded = 0, 0\n")
-    out.append("function _log(msg) if _debug then print(msg) end end")
+    out.append("function _log(msg) debug.log(msg) end")
     out.append("function _check_ready() if loaded >= to_load then _log('All assets loaded') _start_game() end end\n")
 
     # Load 3D models
@@ -61,7 +67,11 @@ HTTP:Get("{url}", function(res)
             end
             for _, asset in ipairs(assets) do
                 asset:SetParent(World)
-                models.{key} = asset
+                if models.{key} == nil then
+                    models.{key} = {{asset}}
+                else
+                    models.{key}[#models.{key}+1] = asset
+                end
                 _log("Downloaded and loaded model {key}")
             end
             loaded += 1
@@ -90,12 +100,6 @@ HTTP:Get("{url}", function(res)
     loaded += 1
     _check_ready()
 end)\n""")
-
-    # Add modules
-    out.append("-- modules\n")
-    for mod_name, mod_code in module_sources.items():
-        unpacked = unpack_lua_module(mod_code)
-        out.append(unpacked + "\n")
 
     # Add start function
     out.append("-- start\n")

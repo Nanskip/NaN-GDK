@@ -1,6 +1,7 @@
 Modules = {
     worldgen = "modules/worldgen.lua",
     loading_screen = "modules/loading_screen.lua",
+    debug = "modules/debug.lua",
 }
 
 Models = {

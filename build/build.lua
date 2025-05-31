@@ -9,9 +9,54 @@ data = {}
 
 sounds = {}
 
+-- modules
+
+-- Debug module
+
+debug = {}function debug.log(text)
+    if _debug then
+        print("Log: " .. text)
+    end
+end
+
+debug._LOGS = {}
+
+function debug.getLogs()
+    local logs = ""
+
+    for _, log in ipairs(debug._LOGS) do
+        logs = logs .. log .. "\n"
+    end
+
+    Dev:CopyToClipboard(logs)
+end
+
+loading_screen = {}loading_screen.ui = require("uikit")
+
+loading_screen.start = function(self)
+    debug.log("Loading screen initialized.")
+    local ui = self.ui
+
+    self.background = ui:frame({color = Color(0, 0, 0, 0)})
+    self.background.Width = Screen.Width
+    self.background.Height = Screen.Height
+end
+
+loading_screen.finish = function(self)
+    debug.log("Loading screen removed.")
+    self.background:remove()
+    self.background = nil
+end
+
+loading_screen:start()
+
+worldgen = {}worldgen.test = function()
+    print("hey!")
+end
+
 local to_load, loaded = 0, 0
 
-function _log(msg) if _debug then print(msg) end end
+function _log(msg) debug.log(msg) end
 function _check_ready() if loaded >= to_load then _log('All assets loaded') _start_game() end end
 
 to_load += 1
@@ -27,7 +72,11 @@ HTTP:Get("https://raw.githubusercontent.com/Nanskip/NaN-GDK/refs/heads/main/sour
             end
             for _, asset in ipairs(assets) do
                 asset:SetParent(World)
-                models.soda_can = asset
+                if models.soda_can == nil then
+                    models.soda_can = {asset}
+                else
+                    models.soda_can[#models.soda_can+1] = asset
+                end
                 _log("Downloaded and loaded model soda_can")
             end
             loaded += 1
@@ -53,7 +102,11 @@ HTTP:Get("https://raw.githubusercontent.com/Nanskip/NaN-GDK/refs/heads/main/sour
             end
             for _, asset in ipairs(assets) do
                 asset:SetParent(World)
-                models.tesla_turret = asset
+                if models.tesla_turret == nil then
+                    models.tesla_turret = {asset}
+                else
+                    models.tesla_turret[#models.tesla_turret+1] = asset
+                end
                 _log("Downloaded and loaded model tesla_turret")
             end
             loaded += 1
@@ -91,29 +144,6 @@ HTTP:Get("https://raw.githubusercontent.com/Nanskip/NaN-GDK/refs/heads/main/sour
     loaded += 1
     _check_ready()
 end)
-
--- modules
-
-loading_screen = {}loading_screen.ui = require("uikit")
-
-loading_screen.start = function(self)
-    local ui = self.ui
-
-    self.background = ui:frame({color = Color(0, 0, 0, 0)})
-    self.background.Width = Screen.Width
-    self.background.Height = Screen.Height
-end
-
-loading_screen.finish = function(self)
-    self.background:remove()
-    self.background = nil
-end
-
-loading_screen:start()
-
-worldgen = {}worldgen.test = function()
-    print("hey!")
-end
 
 -- start
 
