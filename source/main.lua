@@ -3,6 +3,7 @@ Modules = {
     loading_screen = "modules/loading_screen.lua",
     debug = "modules/debug.lua",
     mathlib = "modules/mathlib.lua",
+    advanced_ui = "modules/advanced_ui.lua",
 }
 
 Models = {
@@ -28,11 +29,12 @@ Other = {
 
 _ON_START = function()
     loading_screen:intro()
+    _UI:init()
 end
 
 _ON_START_CLIENT = function()
     _UIKIT = require("uikit")
-    _GAME_NAME = "GAME NAME"
+    _UI = advanced_ui
 
     loading_screen:start()
 end

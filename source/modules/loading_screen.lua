@@ -9,7 +9,7 @@ loading_screen.start = function(self)
     self.background.Height = Screen.Height
 
     -- creating game title
-    self.game_title = _UIKIT:createText(_GAME_NAME)
+    self.game_title = _UIKIT:createText("Convy 2")
     self.title = _UIKIT:createText("Powered by NaN-GDK")
     self.loading_text = _UIKIT:createText("Downloading assets...")
 
