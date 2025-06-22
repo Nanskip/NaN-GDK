@@ -2,6 +2,17 @@
 
 All the main code is in the `main.lua` file located in the `source` directory.
 
+# TODO List:
+:white_check_mark: - Done; :arrows_counterclockwise: - In process; :x: - Not started.
+- :white_check_mark: Asset loading.
+- :x: Better character controller.
+- :x: Better character animation.
+- :arrows_counterclockwise: Advanced-UI module.
+- :x: Build config in JSON.
+- :x: Base assets.
+- :x: Automated translation script.
+- :x: Translation support.
+
 ## How to build
 
 1. Clone the repository.
