@@ -1474,5 +1474,14 @@
     "xoffset": 0,
     "yoffset": 0,
     "xadvance": 38.0
+  },
+  " ": {
+    "x": 336,
+    "y": 681,
+    "w": 38,
+    "h": 0,
+    "xoffset": 0,
+    "yoffset": 0,
+    "xadvance": 38.0
   }
 }
