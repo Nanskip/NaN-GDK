@@ -1483,5 +1483,9 @@
     "xoffset": 0,
     "yoffset": 0,
     "xadvance": 38.0
+  },
+  "Size": {
+    "Width": 546,
+    "Height": 780
   }
 }
