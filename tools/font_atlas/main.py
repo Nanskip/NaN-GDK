@@ -51,6 +51,8 @@ def main():
     x, y = 0, 0
     row_h = 0
 
+    logging.info("Saving atlas image...")
+
     for ch in CHARS:
         bbox = font.getbbox(ch)
         w, h = bbox[2] - bbox[0], bbox[3] - bbox[1]
@@ -87,14 +89,20 @@ def main():
         x += w + PADDING
         row_h = max(row_h, h)
 
-    logging.info("Saving atlas image...")
     atlas.save(OUTPUT_IMAGE)
 
     logging.info("Saving JSON metadata...")
+
+    glyph_data["Size"] = {
+        "Width": atlas_w,
+        "Height": atlas_h
+    }
+
     with open(OUTPUT_JSON, "w", encoding="utf-8") as f:
         json.dump(glyph_data, f, ensure_ascii=False, indent=2)
 
     logging.info("Done!")
+
 
 if __name__ == "__main__":
     main()
