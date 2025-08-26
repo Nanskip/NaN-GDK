@@ -1,14 +1,40 @@
-_ON_START_CLIENT = function()
-    _UI = require("uikit") -- _UI is uikit.lua
-    _DEBUG = _DIR.debug
+Modules = {
+    worldgen = "modules/worldgen.lua",
+    loading_screen = "modules/loading_screen.lua",
+    debug = "modules/debug.lua",
+    mathlib = "modules/mathlib.lua",
+    advanced_ui = "modules/advanced_ui.lua",
+}
 
-    _DIR.loading_screen.loading_screen:init()
-end
+Models = {
+
+}
+
+Textures = {
+    intro_logo = "textures/intro_logo.png",
+}
+
+Sounds = {
+    loading_completed = "sounds/loading_completed.mp3",
+    intro = "sounds/intro.mp3",
+}
+
+Data = {
+
+}
+
+Other = {
+    vcr_font = "other/vcr_font.ttf",
+}
 
 _ON_START = function()
-    _DIR.loading_screen.loading_screen:intro()
+    loading_screen:intro()
+    _UI:init()
+end
 
-    -- test music
+_ON_START_CLIENT = function()
+    _UIKIT = require("uikit")
+    _UI = advanced_ui
 
-    _DIR.test:init()
+    loading_screen:start()
 end
