@@ -7,10 +7,12 @@ mod.init = function(self)
         return
     end
 
+    _DEBUG.log("loading_screen.init()")
+
     local config = {
         title = "Game Name",
         subtitle = "Powered by NaN-GDK!",
-        status = "Downloading: ",
+        status = "Downloading... [0%]",
         background_color = Color(0, 0, 0),
         title_color = Color(255, 255, 255),
         subtitle_color = Color(255, 255, 255),
@@ -23,14 +25,35 @@ mod.init = function(self)
     self.percentage = 0
 
     self.background = _UI:createFrame()
-    self.title = _UI:createText()
-    self.subtitle = _UI:createText()
-    self.status = _UI:createText()
+    self.title = _UI:createText("")
+    self.subtitle = _UI:createText("")
+    self.status = _UI:createText("")
     self.progress_background = _UI:createFrame()
     self.progress = _UI:createFrame()
 
     self.initialized = true
     self:update()
+    
+    self.tick = Object()
+    self.tick.Tick = function(s, dt)
+        if self.initialized then
+            if self.running_intro then
+                self.config.title_color.A = math.max(self.config.title_color.A - 10, 0)
+                self.config.subtitle_color.A = math.max(self.config.subtitle_color.A - 10, 0)
+                self.config.status_color.A = math.max(self.config.status_color.A - 10, 0)
+                self.config.progress_color.A = math.max(self.config.progress_color.A - 10, 0)
+                self.config.progress_background_color.A = math.max(self.config.progress_background_color.A - 10, 0)
+
+                self.intro_timer = self.intro_timer + dt
+                if self.intro_timer > 0.5 then
+                    self.config.background_color.A = math.max(self.config.background_color.A - 20, 0)
+                end
+            end
+            if self.percentage ~= 0 then
+                self:update()
+            end
+        end
+    end
 end
 
 mod.update = function(self)
@@ -46,6 +69,8 @@ mod.update = function(self)
         return
     end
 
+    _DEBUG.log("loading_screen.update()")
+
     local cx = Screen.Width / 2
     local cy = Screen.Height / 2
 
@@ -59,19 +84,23 @@ mod.update = function(self)
     -- update title
     self.title.Text = config.title
     self.title.Color = config.title_color
-    self.title.FontSize = 100
-    self.title.pos = Number2(cx - self.title.Width / 2, cy - self.title.Height / 2 + 200)
+    self.title.object.DrawMode = {
+        outline = { weight=0.05, color=config.title_color }
+    }
+    self.title.object.FontSize = 70
+    self.title.pos = Number2(cx - self.title.Width / 2, cy - self.title.Height / 2 + 150)
 
     -- update subtitle
     self.subtitle.Text = config.subtitle
     self.subtitle.Color = config.subtitle_color
-    self.subtitle.FontSize = 70
-    self.subtitle.pos = Number2(cx - self.subtitle.Width / 2, cy - self.subtitle.Height / 2 + 100)
+    self.subtitle.object.FontSize = 50
+    self.subtitle.pos = Number2(cx - self.subtitle.Width / 2, cy - self.subtitle.Height / 2 + 75)
 
     -- update status
+    config.status = "Downloading... [" .. math.floor(self.percentage * 100) .. "%]"
     self.status.Text = config.status
     self.status.Color = config.status_color
-    self.status.FontSize = 40
+    self.status.object.FontSize = 40
     self.status.pos = Number2(cx - self.status.Width / 2, cy - self.status.Height / 2)
 
     -- update progress bar
@@ -84,7 +113,11 @@ mod.update = function(self)
     )
 
     self.progress.Color = config.progress_color
-    self.progress.Width = self.progress_background.Width * self.percentage
+    self.progress.Width = _DIR.tools.mathlib.lerp(
+        self.progress.Width,
+        self.progress_background.Width * self.percentage,
+        0.1
+    )
     self.progress.Height = self.progress_background.Height
     self.progress.pos = Number2(
         cx - self.progress_background.Width / 2,
@@ -105,7 +138,12 @@ mod.remove = function(self)
         return
     end
 
+    _DEBUG.log("loading_screen.remove()")
+
     self.initialized = false
+
+    self.tick:Destroy()
+    self.tick = nil
 
     self.background:remove()
     self.title:remove()
@@ -113,6 +151,16 @@ mod.remove = function(self)
     self.status:remove()
     self.progress_background:remove()
     self.progress:remove()
+end
+
+mod.intro = function(self)
+    self.percentage = 1
+    self.running_intro = true
+    self.intro_timer = 0
+
+    Timer(1, false, function()
+        self:remove()
+    end)
 end
 
 return mod

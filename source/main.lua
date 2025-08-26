@@ -1,9 +1,14 @@
 _ON_START_CLIENT = function()
     _UI = require("uikit") -- _UI is uikit.lua
+    _DEBUG = _DIR.debug
 
-    loading_screen:init()
+    _DIR.loading_screen.loading_screen:init()
 end
 
 _ON_START = function()
-    loading_screen:remove()
+    _DIR.loading_screen.loading_screen:intro()
+
+    -- test music
+
+    _DIR.test:init()
 end

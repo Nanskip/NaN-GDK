@@ -307,6 +307,15 @@ local __assets = {{
 LUA_ASSET_LOADER = r'''
 local to_load, loaded = 0, 0
 local function _check_ready()
+    local l = _DIR.loading_screen.loading_screen
+
+    if l ~= nil then
+        if l.initialized then
+            l.percentage = loaded / to_load
+            l:update()
+        end
+    end
+
     if loaded >= to_load then
         _log('OK', 'All assets loaded')
         _start_game()
