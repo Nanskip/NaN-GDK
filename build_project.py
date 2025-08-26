@@ -227,7 +227,7 @@ debug = true
 
 _log = function(level, msg)
     local line = '['..level..'] '..tostring(msg)
-    if debug and debug.log then debug.log(line) else print(line) end
+    if debug then print(line) end
     if loading_screen and loading_screen.loading_text_update then
         pcall(function() loading_screen:loading_text_update(msg) end)
     end
@@ -470,7 +470,7 @@ if __name__ == '__main__':
     cfg = BuildConfig(
         source_dir='source',
         output_file='build/build.lua',
-        github_base_url='https://raw.githubusercontent.com/Nanskip/NaN-GDK/refs/heads/main',
+        github_base_url='https://raw.githubusercontent.com/Nanskip/NaN-GDK/refs/heads/tests',
     )
     out = build_project(cfg)
     log_ok("Build finished.")
